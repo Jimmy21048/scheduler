@@ -7,21 +7,24 @@ export default function App() {
     const week = ['Monday','Tuesday','Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     const[days, setDays] = useState([])
     let tempDays
+    const[startTime, setStartTime] = useState('00: 00 am')
+    const[timeRange, setTimeRange] = useState(20)
 
     useEffect(() => {
         tempDays = (week.slice(startDay, ).concat(week.slice(0, startDay)).slice(0, period))
         setDays(tempDays)
-    }, [period, startDay])
+        setStartTime(startTime)
+    }, [period, startDay, startTime])
 
     const handleStartDay = (e) => {
         setStartDay(e.target.value)        
     }
-
+    console.log(typeof(startTime))
   return (
     <div className='container'>
         <div className='side-panel'>
             <label>Period (days)
-                <input type='number' value={period} onChange={(e) => setPeriod(e.target.value)} />
+                <input type='number' max={7} value={period} onChange={(e) => setPeriod(e.target.value)} />
             </label>
             <label>Start Day
                 <select onChange={(e) => handleStartDay(e)}>
@@ -34,6 +37,12 @@ export default function App() {
                     <option value={6}>Sunday</option>
                 </select>
             </label>
+            <label>Start Time
+                <input type='time' onChange={(e) => setStartTime(e.target.value)} />
+            </label>
+            <label>Time Range (minutes)
+                <input type='number' onChange={(e) => setStartTime(e.target.value)} />
+            </label>
         </div>
         <div className='work-space'>
             {
@@ -42,7 +51,10 @@ export default function App() {
                     <div className='p-b-header'>
                     {
                         days.map((day) => {
-                            return <div key={day} className='h-day' style={{ width: `${100 / period}%` }}>{day}</div>
+                            return <div key={day} className='h-day' style={{ width: `${100 / period}%` }}>
+                                <p>{day}</p>
+                                <p>{startTime}</p>
+                            </div>
                         })
                     }
                     </div>
