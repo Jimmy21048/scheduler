@@ -1,0 +1,52 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+}
+.side-panel {
+  width: 20%;
+  min-width: 200px;
+  height: 100%;
+  background-color: #DFFFFD;
+  padding: 20px;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+input, select {
+  height: 5vh;
+  width: 120px;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+.work-space {
+  width: 80%;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.period-box {
+  border: 1px solid black;
+  border-radius: 5px;
+
+}
+.p-b-header {
+  border-bottom: 1px solid;
+  width: 100%;
+  height: 8vh;
+  display: flex;
+}
+.h-day {
+  border: 1px solid;
+}
