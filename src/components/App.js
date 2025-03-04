@@ -13,6 +13,8 @@ export default function App() {
     const[trigger, setTrigger] = useState(false)
     const[sessionCount, setSessionCount] = useState(0)
     const[timeFrame, setTimeFrame] = useState([])
+    const[elements, setElements] = useState([])
+    const[designLayout, setDesignLayout] = useState(true)
 
     useEffect(() => {
         tempDays = (week.slice(startDay, ).concat(week.slice(0, startDay)).slice(0, period))
@@ -57,12 +59,30 @@ export default function App() {
         
         setTimeFrame(timeFrameArray)
         setSessionCount(count)
-    }, [period, startDay, startTime, endTime, timeRange])
 
-    const handleStartDay = (e) => {
-        setStartDay(e.target.value)        
-    }
+        handleRenderBlocks()
+    }, [period, startDay, startTime, endTime, timeRange,])
     
+    const handleRenderBlocks = () => {
+        let elementCount = []
+        for(let i = 0; i < (period ) * (sessionCount - 1); i ++) {
+            elementCount.push('')
+        }
+        setElements(elementCount)
+    }
+    // console.log(elements.length)
+
+    const handleChangeText = (e, index) => {
+        let tempArr = elements
+        // console.log(index, tempArr[index])
+        tempArr[index] = e.target.value
+        // console.log(index, tempArr[index])
+        setElements(tempArr)
+    }
+
+    const handleViewResult = () => {
+        setDesignLayout(prev => !prev)
+    }
   return (
     <div className='container'>
         <div className='side-panel'>
@@ -70,7 +90,7 @@ export default function App() {
                 <input type='number' max={7} value={period} onChange={(e) => setPeriod(e.target.value)} />
             </label>
             <label>Start Day
-                <select onChange={(e) => handleStartDay(e)}>
+                <select onChange={(e) => setStartDay(e.target.value)}>
                     <option value={0}>Monday</option>
                     <option value={1}>Tuesday</option>
                     <option value={2}>Wednesday</option>
@@ -89,11 +109,13 @@ export default function App() {
             <label>End Time
                 <input type='time' onChange={(e) => setEndTime(e.target.value)} />
             </label>
+            <button className='btn-render' onClick={handleRenderBlocks}>Correct blocks</button>
+            <button className='btn-render' onClick={handleViewResult}>{ designLayout ? 'View Result' : 'Design View' }</button>
         </div>
         <div className='work-space'>
             {
                 period > 0 &&
-                <div className='period-box' style={{ width : `${(period) * 150 + 100}px`, height: `${(60 * (sessionCount - 1)) + 50}px`, minWidth: '100px' }}>
+                <div className='period-box' style={{ width : `${(period) * 150 + 90}px`, height: `${(60 * (sessionCount - 1)) + 50}px`, minWidth: '100px' }}>
                     <div className='p-b-header'>
                     <div className='h-day' style={{ minWidth: `${90}px`, width: '90px', height: '50px' }}></div>
                         {
@@ -114,7 +136,23 @@ export default function App() {
                                 })
                             }
                         </div>
-                        <div className='b-right'></div>
+                        <div className='b-right' style={{ width: `${period * 150}px`, height: `100%` }}>
+                        {
+                            elements.map((element, index) => {
+                                return <div key={index} className='block' style={{ width: `${100 / period}%` }} >
+                                    {
+                                        designLayout ? 
+                                            <textarea defaultValue={element} onChange={(e) => handleChangeText(e, index)} 
+                                            placeholder='text here...' 
+                                            style={{ width: '100%', height: '100%' }} /> :
+                                            <div className='block-text'>
+                                                {element}
+                                            </div>
+                                    }
+                                </div>
+                            })
+                        }
+                        </div>
                     </div>
                 </div>
             }
