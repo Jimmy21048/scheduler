@@ -51,14 +51,14 @@ export default function App() {
                 endMinutes = tempEndHours.getMinutes()
             }
             count ++
-            // setTimeFrame(prev => prev.push(`${startHours}: ${startMinutes} - ${endHours}: ${endMinutes}`))
+
             timeFrameArray.push(`${String(startHours).padStart(2, "0")}:${String(startMinutes).padStart(2, "0")} - ${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`)
         }
         
         setTimeFrame(timeFrameArray)
         setSessionCount(count)
     }, [period, startDay, startTime, endTime, timeRange])
-    console.log(timeFrame)
+
     const handleStartDay = (e) => {
         setStartDay(e.target.value)        
     }
@@ -93,26 +93,26 @@ export default function App() {
         <div className='work-space'>
             {
                 period > 0 &&
-                <div className='period-box' style={{ width : `${(period - 1) * 120}px`, height: `${80 * period + 70}px` }}>
+                <div className='period-box' style={{ width : `${(period) * 150 + 100}px`, height: `${(60 * (sessionCount - 1)) + 50}px`, minWidth: '100px' }}>
                     <div className='p-b-header'>
-                    <div className='h-day' style={{ minWidth: `${100}px`, width: '100px' }}></div>
-                    {
-                        timeFrame.slice(0, -1).map((item, index) => {
-                            return <div key={index} className='h-day' style={{ width: `${100 / period}%` }}>
-                                <p>{item}</p>
-                            </div>
-                        })
-                    }
-                    </div>
-                    <div className='p-b-body' style={{ height: `${period * 80}px` }}>
-                        <div className='b-left' style={{ width: `${100}px` }}>
+                    <div className='h-day' style={{ minWidth: `${90}px`, width: '90px', height: '50px' }}></div>
                         {
                             days.map((day) => {
-                                return <div key={day} className='h-day' style={{ height: `${80}px`, width: '100px' }}>
+                                return <div key={day} className='h-day' style={{ width: `150px`, minWidth: '100px', height: '50px' }}>
                                     <p>{day}</p>
                                 </div>
                             })
                         }
+                    </div>
+                    <div className='p-b-body' style={{ height: `${(sessionCount - 1) * 60}px`, width: '100%' }}>
+                        <div className='b-left'>
+                            {
+                                timeFrame.slice(0, -1).map((item, index) => {
+                                    return <div key={index} className='h-day' style={{ height: `${60}px`, width: '90px' }} >
+                                        <p>{item}</p>
+                                    </div>
+                                })
+                            }
                         </div>
                         <div className='b-right'></div>
                     </div>
@@ -120,5 +120,4 @@ export default function App() {
             }
         </div>
     </div>
-  )
-}
+)}
