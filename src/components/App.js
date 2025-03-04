@@ -12,7 +12,6 @@ export default function App() {
     const[startTime, setStartTime] = useState('00:00')
     const[endTime, setEndTime] = useState('00:00')
     const[timeRange, setTimeRange] = useState("00:20")
-    const[trigger, setTrigger] = useState(false)
     const[sessionCount, setSessionCount] = useState(0)
     const[timeFrame, setTimeFrame] = useState([])
     const[elements, setElements] = useState([])
@@ -38,7 +37,7 @@ export default function App() {
         
         
         while(minuteEnd - minuteStart >= minuteRange) {
-            if(count == 0 ) {
+            if(count === 0 ) {
                 newDate.setHours(startHours, startMinutes); 
                 tempEndHours.setHours(startHours, startMinutes + (minuteRange))
                 startHours = newDate.getHours()
@@ -118,7 +117,7 @@ export default function App() {
             <label>Start Time
                 <input type='time' onChange={(e) => setStartTime(e.target.value)} />
             </label>
-            <label>Time Range (minutes)
+            <label>Time Range
                 <input type='time' value={timeRange} onChange={(e) => setTimeRange(e.target.value)} />
             </label>
             <label>End Time
@@ -152,7 +151,7 @@ export default function App() {
                                 })
                             }
                         </div>
-                        <div className='b-right' style={{ width: `${period * 150}px`, height: `100%` }}>
+                        <div className='b-right' style={{ width: `${period * 150}px`, height: `100%`, "--sess-count": `${(sessionCount - 1) * 40}px` }}>
                         {
                             elements.map((element, index) => {
                                 return <div key={index} className='block' style={{ width: `${100 / period}%` }} >
