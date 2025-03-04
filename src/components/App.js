@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
+import html2canvas from "html2canvas"
+import { jsPDF } from "jspdf"
 
 export default function App() {
     const[period, setPeriod] = useState(0)
@@ -70,18 +72,31 @@ export default function App() {
         }
         setElements(elementCount)
     }
-    // console.log(elements.length)
+
 
     const handleChangeText = (e, index) => {
         let tempArr = elements
-        // console.log(index, tempArr[index])
         tempArr[index] = e.target.value
-        // console.log(index, tempArr[index])
         setElements(tempArr)
     }
 
     const handleViewResult = () => {
         setDesignLayout(prev => !prev)
+    }
+
+    const handleDownloadPdf = () => {
+        const divToPrint = document.getElementById('toPrint')
+
+        html2canvas(divToPrint).then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF("p", "mm", "a4");
+            
+            const imgWidth = 210; // A4 size width in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+            pdf.save("scheduled.pdf");
+        })
     }
   return (
     <div className='container'>
@@ -111,11 +126,12 @@ export default function App() {
             </label>
             <button className='btn-render' onClick={handleRenderBlocks}>Correct blocks</button>
             <button className='btn-render' onClick={handleViewResult}>{ designLayout ? 'View Result' : 'Design View' }</button>
+            <button className='btn-render' onClick={handleDownloadPdf}>Download</button>
         </div>
         <div className='work-space'>
             {
                 period > 0 &&
-                <div className='period-box' style={{ width : `${(period) * 150 + 90}px`, height: `${(60 * (sessionCount - 1)) + 50}px`, minWidth: '100px' }}>
+                <div id='toPrint' className='period-box' style={{ width : `${(period) * 150 + 90}px`, height: `${(60 * (sessionCount - 1)) + 50}px`, minWidth: '100px' }}>
                     <div className='p-b-header'>
                     <div className='h-day' style={{ minWidth: `${90}px`, width: '90px', height: '50px' }}></div>
                         {
