@@ -59,3 +59,11 @@ input, select {
   align-items: center;
   justify-content: space-between;
 }
+.p-b-body {
+  display: flex;
+  height: 100%;
+}
+.b-left {
+  border: 1px solid;
+  height: 90%;
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
 export default function App() {
@@ -7,19 +7,46 @@ export default function App() {
     const week = ['Monday','Tuesday','Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     const[days, setDays] = useState([])
     let tempDays
-    const[startTime, setStartTime] = useState('00: 00 am')
-    const[timeRange, setTimeRange] = useState(20)
+    const[startTime, setStartTime] = useState('00:00')
+    const[endTime, setEndTime] = useState('00:00')
+    const[timeRange, setTimeRange] = useState("00:20")
+    const[trigger, setTrigger] = useState(false)
+    const[sessionCount, setSessionCount] = useState(0)
 
     useEffect(() => {
         tempDays = (week.slice(startDay, ).concat(week.slice(0, startDay)).slice(0, period))
         setDays(tempDays)
         setStartTime(startTime)
-    }, [period, startDay, startTime])
+        setEndTime(endTime)
+        setTimeRange(timeRange)
 
+        let [startHours, startMinutes] = startTime.split(':').map(Number)
+        let [endHours, endMinutes] = endTime.split(':').map(Number)
+        let [rangeHours, rangeMinutes] = timeRange.split(':').map(Number)
+        let minuteStart = (startHours * 60) + startMinutes
+        let minuteEnd = (endHours * 60) + endMinutes
+        let minuteRange = (rangeHours * 60) + rangeMinutes
+        let newDate = new Date();
+        let count = 0
+        
+        
+        while(minuteEnd - minuteStart >= minuteRange) {
+            count ++
+            newDate.setHours(startHours, startMinutes + minuteRange); 
+            minuteStart +=minuteRange
+            startHours = newDate.getHours()
+            startMinutes = newDate.getMinutes()
+           
+            console.log(startHours, startMinutes)
+        }
+
+        setSessionCount(count)
+    }, [period, startDay, startTime, endTime, timeRange])
+    console.log(sessionCount)
     const handleStartDay = (e) => {
         setStartDay(e.target.value)        
     }
-    console.log(typeof(startTime))
+    
   return (
     <div className='container'>
         <div className='side-panel'>
@@ -41,13 +68,16 @@ export default function App() {
                 <input type='time' onChange={(e) => setStartTime(e.target.value)} />
             </label>
             <label>Time Range (minutes)
-                <input type='number' onChange={(e) => setStartTime(e.target.value)} />
+                <input type='time' value={timeRange} onChange={(e) => setTimeRange(e.target.value)} />
+            </label>
+            <label>End Time
+                <input type='time' onChange={(e) => setEndTime(e.target.value)} />
             </label>
         </div>
         <div className='work-space'>
             {
                 period > 0 &&
-                <div className='period-box' style={{ width : `${period * 150}px`, height: '80vh' }}>
+                <div className='period-box' style={{ width : `${period * 150}px`, height: '90vh' }}>
                     <div className='p-b-header'>
                     {
                         days.map((day) => {
@@ -57,6 +87,18 @@ export default function App() {
                             </div>
                         })
                     }
+                    </div>
+                    <div className='p-b-body'>
+                        <div className='b-left' style={{ width: `${100 / period}%` }}>
+                        {/* {
+                            days.map((day) => {
+                                return <div key={day} className='h-day' style={{ height: `${100 / period}%` }}>
+                                    <p>{day}</p>
+                                </div>
+                            })
+                        } */}
+                        </div>
+                        <div className='b-right'></div>
                     </div>
                 </div>
             }
