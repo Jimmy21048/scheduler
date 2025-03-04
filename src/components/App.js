@@ -4,7 +4,7 @@ import './App.css'
 export default function App() {
     const[period, setPeriod] = useState(0)
     const[startDay, setStartDay] = useState(0)
-    const week = ['Monday','Tuesday','Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    const week = ['Mon','Tue','Wed', 'Thur', 'Fri', 'Sat', 'Sun']
     const[days, setDays] = useState([])
     let tempDays
     const[startTime, setStartTime] = useState('00:00')
@@ -12,6 +12,7 @@ export default function App() {
     const[timeRange, setTimeRange] = useState("00:20")
     const[trigger, setTrigger] = useState(false)
     const[sessionCount, setSessionCount] = useState(0)
+    const[timeFrame, setTimeFrame] = useState([])
 
     useEffect(() => {
         tempDays = (week.slice(startDay, ).concat(week.slice(0, startDay)).slice(0, period))
@@ -27,22 +28,37 @@ export default function App() {
         let minuteEnd = (endHours * 60) + endMinutes
         let minuteRange = (rangeHours * 60) + rangeMinutes
         let newDate = new Date();
+        const tempEndHours = new Date()
         let count = 0
+        const timeFrameArray = []
         
         
         while(minuteEnd - minuteStart >= minuteRange) {
+            if(count == 0 ) {
+                newDate.setHours(startHours, startMinutes); 
+                tempEndHours.setHours(startHours, startMinutes + (minuteRange))
+                startHours = newDate.getHours()
+                startMinutes = newDate.getMinutes()
+                endHours = tempEndHours.getHours()
+                endMinutes = tempEndHours.getMinutes()
+            } else {
+                newDate.setHours(startHours, startMinutes + minuteRange); 
+                tempEndHours.setHours(startHours, startMinutes + (minuteRange * 2))
+                minuteStart +=minuteRange
+                startHours = newDate.getHours()
+                startMinutes = newDate.getMinutes()
+                endHours = tempEndHours.getHours()
+                endMinutes = tempEndHours.getMinutes()
+            }
             count ++
-            newDate.setHours(startHours, startMinutes + minuteRange); 
-            minuteStart +=minuteRange
-            startHours = newDate.getHours()
-            startMinutes = newDate.getMinutes()
-           
-            console.log(startHours, startMinutes)
+            // setTimeFrame(prev => prev.push(`${startHours}: ${startMinutes} - ${endHours}: ${endMinutes}`))
+            timeFrameArray.push(`${String(startHours).padStart(2, "0")}:${String(startMinutes).padStart(2, "0")} - ${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`)
         }
-
+        
+        setTimeFrame(timeFrameArray)
         setSessionCount(count)
     }, [period, startDay, startTime, endTime, timeRange])
-    console.log(sessionCount)
+    console.log(timeFrame)
     const handleStartDay = (e) => {
         setStartDay(e.target.value)        
     }
@@ -77,26 +93,26 @@ export default function App() {
         <div className='work-space'>
             {
                 period > 0 &&
-                <div className='period-box' style={{ width : `${period * 150}px`, height: '90vh' }}>
+                <div className='period-box' style={{ width : `${(period - 1) * 120}px`, height: `${80 * period + 70}px` }}>
                     <div className='p-b-header'>
+                    <div className='h-day' style={{ minWidth: `${100}px`, width: '100px' }}></div>
                     {
-                        days.map((day) => {
-                            return <div key={day} className='h-day' style={{ width: `${100 / period}%` }}>
-                                <p>{day}</p>
-                                <p>{startTime}</p>
+                        timeFrame.slice(0, -1).map((item, index) => {
+                            return <div key={index} className='h-day' style={{ width: `${100 / period}%` }}>
+                                <p>{item}</p>
                             </div>
                         })
                     }
                     </div>
-                    <div className='p-b-body'>
-                        <div className='b-left' style={{ width: `${100 / period}%` }}>
-                        {/* {
+                    <div className='p-b-body' style={{ height: `${period * 80}px` }}>
+                        <div className='b-left' style={{ width: `${100}px` }}>
+                        {
                             days.map((day) => {
-                                return <div key={day} className='h-day' style={{ height: `${100 / period}%` }}>
+                                return <div key={day} className='h-day' style={{ height: `${80}px`, width: '100px' }}>
                                     <p>{day}</p>
                                 </div>
                             })
-                        } */}
+                        }
                         </div>
                         <div className='b-right'></div>
                     </div>
