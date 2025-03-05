@@ -100,6 +100,7 @@ export default function App() {
   return (
     <div className='container'>
         <div className='side-panel'>
+            <h1>Scheduler</h1>
             <label>Period (days)
                 <input type='number' max={7} value={period} onChange={(e) => setPeriod(e.target.value)} />
             </label>
