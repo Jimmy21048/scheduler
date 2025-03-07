@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import html2canvas from "html2canvas"
 import { jsPDF } from "jspdf"
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 
 export default function App() {
     const[period, setPeriod] = useState(0)
@@ -9,9 +11,9 @@ export default function App() {
     const week = ['Mon','Tue','Wed', 'Thur', 'Fri', 'Sat', 'Sun']
     const[days, setDays] = useState([])
     let tempDays
-    const[startTime, setStartTime] = useState('00:00')
-    const[endTime, setEndTime] = useState('00:00')
-    const[timeRange, setTimeRange] = useState("00:20")
+    const[startTime, setStartTime] = useState('08:00')
+    const[endTime, setEndTime] = useState('19:00')
+    const[timeRange, setTimeRange] = useState("02:00")
     const[sessionCount, setSessionCount] = useState(0)
     const[timeFrame, setTimeFrame] = useState([])
     const[elements, setElements] = useState([])
@@ -23,6 +25,7 @@ export default function App() {
         setStartTime(startTime)
         setEndTime(endTime)
         setTimeRange(timeRange)
+        
 
         let [startHours, startMinutes] = startTime.split(':').map(Number)
         let [endHours, endMinutes] = endTime.split(':').map(Number)
@@ -64,6 +67,7 @@ export default function App() {
         handleRenderBlocks()
     }, [period, startDay, startTime, endTime, timeRange,])
     
+    
     const handleRenderBlocks = () => {
         let elementCount = []
         for(let i = 0; i < (period ) * (sessionCount - 1); i ++) {
@@ -97,6 +101,7 @@ export default function App() {
             pdf.save("scheduled.pdf");
         })
     }
+
   return (
     <div className='container'>
         <div className='side-panel'>
@@ -116,16 +121,43 @@ export default function App() {
                 </select>
             </label>
             <label>Start Time
-                <input type='time' onChange={(e) => setStartTime(e.target.value)} />
+                <Flatpickr
+                    value={startTime}
+                    onChange={(selectedDates, dateStr) => setStartTime(dateStr)}
+                    options={{
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    }}
+                />
             </label>
-            <label>Time Range
-                <input type='time' value={timeRange} onChange={(e) => setTimeRange(e.target.value)} />
+            <label>Session Period
+                <Flatpickr
+                    value={timeRange}
+                    onChange={(selectedDates, dateStr) => setTimeRange(dateStr)}
+                    options={{
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    }}
+                />
             </label>
             <label>End Time
-                <input type='time' onChange={(e) => setEndTime(e.target.value)} />
+                <Flatpickr
+                    value={endTime}
+                    onChange={(selectedDates, dateStr) => setEndTime(dateStr)}
+                    options={{
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    }}
+                />
             </label>
-            <button className='btn-render' onClick={handleRenderBlocks}>Correct blocks</button>
-            <button className='btn-render' onClick={handleViewResult}>{ designLayout ? 'View Result' : 'Design View' }</button>
+            <button className='btn-render' onClick={handleRenderBlocks}>Update Blocks</button>
+            <button className='btn-render' onClick={handleViewResult}>{ designLayout ? 'Results View' : 'Design View' }</button>
             <button className='btn-render' onClick={handleDownloadPdf}>Download</button>
         </div>
         <div className='work-space'>

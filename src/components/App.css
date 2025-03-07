@@ -17,18 +17,26 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  justify-content: space-around;
 }
 label {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  color: #112A46;
+  font-weight: 600;
 }
 input, select {
   height: 5vh;
   width: 120px;
   border-radius: 10px;
   padding: 5px;
+  border: 1px solid #112A46;
+}
+input:focus, select:focus {
+  outline: none;
+  border: 1px solid #FF1313;
 }
 
 .work-space {
@@ -36,7 +44,6 @@ input, select {
   height: 100%;
   padding: 20px;
   padding-top: 50px;
-  /* padding-top: 100px; */
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -74,11 +81,22 @@ input, select {
 }
 .btn-render {
   height: 6vh;
+  min-height: 5vh;
   width: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: #112A46;
+  color: #f4f5f6;
+}
+.btn-render:active {
+  background-color: #257489;
+}
+.btn-render:hover {
+  background-color: #257489;
 }
 .b-right {
   display: flex;
@@ -87,7 +105,6 @@ input, select {
 }
 .block {
   height: 60px;
-  /* width: 150px; */
   border: 1px solid;
 }
 textarea {
@@ -106,10 +123,10 @@ textarea:focus {
   height: 100%;
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 1050px) {
   .container {
-    flex-direction: column-reverse;
-    height: 90vh;
+    flex-direction: column;
+    /* height: 90vh; */
   }
   .side-panel {
     width: 100%;
