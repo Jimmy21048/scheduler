@@ -77,7 +77,6 @@ input:focus, select:focus {
 
 }
 .b-left {
-  /* border: 1px solid; */
   height: 100%;
 }
 .btn-render {
@@ -133,6 +132,10 @@ textarea:focus {
   font-size: 1.1rem;
   color: #B2BEB5;
   font-weight: 700;
+}
+a {
+  text-decoration: none;
+  color: #112A46;
 }
 
 @media screen and (max-width: 1050px) {

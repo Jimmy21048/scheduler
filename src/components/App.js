@@ -102,27 +102,17 @@ export default function App() {
         const divToPrint = document.getElementById('toPrint')
 
         html2canvas(divToPrint).then((canvas) => {
-            // const imgData = canvas.toDataURL("image/png");
-            // const pdf = new jsPDF("p", "mm", "a4");
-            
-            // const imgWidth = 200;
-            // const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-            // pdf.addImage(imgData, "PNG", 5, 20, imgWidth, imgHeight);
-            // pdf.save("scheduled.pdf");
             const imgData = canvas.toDataURL("image/png");
             const pdf = new jsPDF("p", "mm", "a4");
         
-            // Get the actual width and height of the div in pixels
             const divWidth = divToPrint.offsetWidth;
             const divHeight = divToPrint.offsetHeight;
-        
-            // Convert pixels to mm (assuming 96 dpi, 1 inch = 25.4 mm)
-            const pxToMm = 25.4 / 96; // Conversion factor
+
+            const pxToMm = 25.4 / 96; 
             const imgWidth = divWidth * pxToMm > 200 ? 200 : (divWidth * pxToMm);
             const imgHeight = divHeight * pxToMm;
         
-            pdf.addImage(imgData, "PNG", 5, 10, imgWidth, imgHeight); // Adding a margin of 10mm
+            pdf.addImage(imgData, "PNG", 5, 10, imgWidth, imgHeight); 
             pdf.save("scheduled.pdf");
         })
     }
@@ -190,6 +180,7 @@ export default function App() {
             <button className='btn-render' onClick={handleRenderBlocks}>Update Blocks</button>
             <button className='btn-render' onClick={handleViewResult}>{ designLayout ? 'Results View' : 'Design View' }</button>
             <button className='btn-render' onClick={handleDownloadPdf}>Download</button>
+            <a href='http://jimmy-rubia.vercel.app/'>@rubiajimmy</a>
         </div>
         <div className='work-space'>
         {
