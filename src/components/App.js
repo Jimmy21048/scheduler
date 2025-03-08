@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import html2canvas from "html2canvas"
 import { jsPDF } from "jspdf"
@@ -73,6 +73,15 @@ export default function App() {
         for(let i = 0; i < (period ) * (sessionCount - 1); i ++) {
             elementCount.push('')
         }
+        for(let i = 0; i < elementCount.length; i++) {
+            if(elements.length > 0) {
+                if(elements[i]) {
+                    if(elements[i].length > 0) {
+                        elementCount[i] = elements[i]
+                    }
+                }
+            }
+        }
         setElements(elementCount)
     }
 
@@ -84,17 +93,19 @@ export default function App() {
     }
 
     const handleViewResult = () => {
+        handleRenderBlocks()
         setDesignLayout(prev => !prev)
     }
 
     const handleDownloadPdf = () => {
+        handleRenderBlocks()
         const divToPrint = document.getElementById('toPrint')
 
         html2canvas(divToPrint).then((canvas) => {
             const imgData = canvas.toDataURL("image/png");
             const pdf = new jsPDF("p", "mm", "a4");
             
-            const imgWidth = 210; // A4 size width in mm
+            const imgWidth = 200; // A4 size width in mm
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
             pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
@@ -110,7 +121,7 @@ export default function App() {
                 <input type='number' max={7} value={period} onChange={(e) => setPeriod(e.target.value)} />
             </label>
             <label>Start Day
-                <select onChange={(e) => setStartDay(e.target.value)}>
+                <select onChange={(e) => {setStartDay(e.target.value); handleRenderBlocks()}} onFocus={handleRenderBlocks} onBlur={handleRenderBlocks} >
                     <option value={0}>Monday</option>
                     <option value={1}>Tuesday</option>
                     <option value={2}>Wednesday</option>
@@ -123,7 +134,9 @@ export default function App() {
             <label>Start Time
                 <Flatpickr
                     value={startTime}
-                    onChange={(selectedDates, dateStr) => setStartTime(dateStr)}
+                    onChange={(selectedDates, dateStr) => {setStartTime(dateStr); handleRenderBlocks()}}
+                    onBlur={handleRenderBlocks}
+                    onFocus={handleRenderBlocks}
                     options={{
                     enableTime: true,
                     noCalendar: true,
@@ -135,7 +148,9 @@ export default function App() {
             <label>Session Period
                 <Flatpickr
                     value={timeRange}
-                    onChange={(selectedDates, dateStr) => setTimeRange(dateStr)}
+                    onChange={(selectedDates, dateStr) => {setTimeRange(dateStr); handleRenderBlocks()}}
+                    onBlur={handleRenderBlocks}
+                    onFocus={handleRenderBlocks}
                     options={{
                     enableTime: true,
                     noCalendar: true,
@@ -147,7 +162,9 @@ export default function App() {
             <label>End Time
                 <Flatpickr
                     value={endTime}
-                    onChange={(selectedDates, dateStr) => setEndTime(dateStr)}
+                    onChange={(selectedDates, dateStr) => {setEndTime(dateStr); handleRenderBlocks()}}
+                    onBlur={handleRenderBlocks}
+                    onFocus={handleRenderBlocks}
                     options={{
                     enableTime: true,
                     noCalendar: true,
@@ -163,7 +180,7 @@ export default function App() {
         <div className='work-space'>
             {
                 period > 0 &&
-                <div id='toPrint' className='period-box' style={{ width : `${(period) * 150 + 90}px`, height: `${(60 * (sessionCount - 1)) + 50}px`, minWidth: '100px' }}>
+                <div id='toPrint' className='period-box' style={{ width : `${(period) * 150 + 90}px`, height: `${(60 * (sessionCount - 1)) + 50}px`, minWidth: '100px', '--period-count': period }}>
                     <div className='p-b-header'>
                     <div className='h-day' style={{ minWidth: `${90}px`, width: '90px', height: '50px' }}></div>
                         {

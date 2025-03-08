@@ -152,43 +152,46 @@ textarea:focus {
     padding-left: 5px;
     padding-top: 20px;
     font-size: 0.6rem;
-    /* overflow-x: hidden; */
   }
   .period-box {
+    width: calc( var(--period-count) * 12.5%);
     max-width: 98vw;
     height: max-content !important;
   }
   .p-b-header {
-    max-width: 98vw;
+    width: 100% !important;
     height: 30px;
   }
-  .h-day {
+  .p-b-header .h-day {
+    width: calc(100% / (var(--period-count) + 1)) !important;
     min-width: 40px !important;
-    max-width: 12.5%;
+  }
+  .h-day {
     height: 30px !important;
   }
   .p-b-body {
-    max-width: 98vw;
     height: max-content !important;
-    /* max-height: ; */
   }
   .b-left {
-    max-width: 12.5%;
+    width: calc(100% / (var(--period-count))) !important;
     height: max-content;
+    min-width: 40px;
   }
   .b-left .h-day {
+    width: 100% !important;
+    min-width: 40px;
     height: 40px !important;
-    max-width: 100%;
   }
   .b-right {
     height: var(--sess-count) !important;
-    width: 87.5%;
+    width: calc((100% / var(--period-count)) * var(--period-count)) !important;
     flex-wrap:wrap;
-    /* max-height: min-content; */
+    max-height: min-content;
   }
   .block {
+    width: calc(100% / (var(--period-count))) !important;
+    min-width: 40px;
     height: 40px;
-    
   }
   textarea {
     font-size: 0.6rem;
