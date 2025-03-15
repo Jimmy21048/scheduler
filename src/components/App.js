@@ -18,61 +18,83 @@ export default function App() {
     const[timeFrame, setTimeFrame] = useState([])
     const[elements, setElements] = useState([])
     const[designLayout, setDesignLayout] = useState(true)
+    // new code
+    const[sessions, setSessions] = useState(0)
+    const[x, setX] = useState([])
+    const blocker = document.getElementById("blocker")
 
     useEffect(() => {
         tempDays = (week.slice(startDay, ).concat(week.slice(0, startDay)).slice(0, period))
         setDays(tempDays)
+        
         setStartTime(startTime)
         setEndTime(endTime)
         setTimeRange(timeRange)
         
-
-        let [startHours, startMinutes] = startTime.split(':').map(Number)
-        let [endHours, endMinutes] = endTime.split(':').map(Number)
-        let [rangeHours, rangeMinutes] = timeRange.split(':').map(Number)
-        let minuteStart = (startHours * 60) + startMinutes
-        let minuteEnd = (endHours * 60) + endMinutes
-        let minuteRange = (rangeHours * 60) + rangeMinutes
-        let newDate = new Date();
-        const tempEndHours = new Date()
-        let count = 0
-        const timeFrameArray = []
-        
-        
-        while(minuteEnd - minuteStart >= minuteRange) {
-            if(count === 0 ) {
-                newDate.setHours(startHours, startMinutes); 
-                tempEndHours.setHours(startHours, startMinutes + (minuteRange))
-                startHours = newDate.getHours()
-                startMinutes = newDate.getMinutes()
-                endHours = tempEndHours.getHours()
-                endMinutes = tempEndHours.getMinutes()
-            } else {
-                newDate.setHours(startHours, startMinutes + minuteRange); 
-                tempEndHours.setHours(startHours, startMinutes + (minuteRange * 2))
-                minuteStart +=minuteRange
-                startHours = newDate.getHours()
-                startMinutes = newDate.getMinutes()
-                endHours = tempEndHours.getHours()
-                endMinutes = tempEndHours.getMinutes()
+        // new code
+        const tempX = []
+        const tempX2 = x
+        for(let i = 0; i < sessions; i++) {
+            tempX.push('')
+        }
+        for(let i = 0; i < tempX.length; i++) {
+            if(tempX2[i]) {
+                if(tempX2[i].length > 0) {
+                    tempX[i] = tempX2[i]
+                }
             }
-            count ++
 
-            timeFrameArray.push(`${String(startHours).padStart(2, "0")}:${String(startMinutes).padStart(2, "0")} - ${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`)
         }
         
-        setTimeFrame(timeFrameArray)
-        setSessionCount(count)
+        setX(tempX)
+
+        // let [startHours, startMinutes] = startTime.split(':').map(Number)
+        // let [endHours, endMinutes] = endTime.split(':').map(Number)
+        // let [rangeHours, rangeMinutes] = timeRange.split(':').map(Number)
+        // let minuteStart = (startHours * 60) + startMinutes
+        // let minuteEnd = (endHours * 60) + endMinutes
+        // let minuteRange = (rangeHours * 60) + rangeMinutes
+        // let newDate = new Date();
+        // const tempEndHours = new Date()
+        // let count = 0
+        // const timeFrameArray = []
+        
+        
+        // while(minuteEnd - minuteStart >= minuteRange) {
+        //     if(count === 0 ) {
+        //         newDate.setHours(startHours, startMinutes); 
+        //         tempEndHours.setHours(startHours, startMinutes + (minuteRange))
+        //         startHours = newDate.getHours()
+        //         startMinutes = newDate.getMinutes()
+        //         endHours = tempEndHours.getHours()
+        //         endMinutes = tempEndHours.getMinutes()
+        //     } else {
+        //         newDate.setHours(startHours, startMinutes + minuteRange); 
+        //         tempEndHours.setHours(startHours, startMinutes + (minuteRange * 2))
+        //         minuteStart +=minuteRange
+        //         startHours = newDate.getHours()
+        //         startMinutes = newDate.getMinutes()
+        //         endHours = tempEndHours.getHours()
+        //         endMinutes = tempEndHours.getMinutes()
+        //     }
+        //     count ++
+
+        //     timeFrameArray.push(`${String(startHours).padStart(2, "0")}:${String(startMinutes).padStart(2, "0")} - ${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`)
+        // }
+        
+        // setTimeFrame(timeFrameArray)
+        // setSessionCount(count)
 
         handleRenderBlocks()
-    }, [period, startDay, startTime, endTime, timeRange,])
+    }, [period, startDay, startTime, endTime, timeRange, sessions])
     
-    
+
     const handleRenderBlocks = () => {
         let elementCount = []
-        for(let i = 0; i < (period ) * (sessionCount - 1); i ++) {
+        for(let i = 0; i < (period ) * sessions; i ++) {
             elementCount.push('')
         }
+
         for(let i = 0; i < elementCount.length; i++) {
             if(elements.length > 0) {
                 if(elements[i]) {
@@ -82,6 +104,8 @@ export default function App() {
                 }
             }
         }
+
+
         setElements(elementCount)
     }
 
@@ -90,6 +114,18 @@ export default function App() {
         let tempArr = elements
         tempArr[index] = e.target.value
         setElements(tempArr)
+    }
+
+    const handleChangeTime = (e, index) => {
+        let tempArr = x
+        tempArr[index] = e.target.value
+        setX(tempArr)
+    }
+
+    const handleAddSession = (e) => {
+
+        setSessions(e.target.value)
+        blocker.click()
     }
 
     const handleViewResult = () => {
@@ -104,15 +140,11 @@ export default function App() {
         html2canvas(divToPrint).then((canvas) => {
             const imgData = canvas.toDataURL("image/png");
             const pdf = new jsPDF("p", "mm", "a4");
-        
-            const divWidth = divToPrint.offsetWidth;
-            const divHeight = divToPrint.offsetHeight;
+            
+            const imgWidth = 200; // A4 size width in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-            const pxToMm = 25.4 / 96; 
-            const imgWidth = divWidth * pxToMm > 200 ? 200 : (divWidth * pxToMm);
-            const imgHeight = divHeight * pxToMm;
-        
-            pdf.addImage(imgData, "PNG", 5, 10, imgWidth, imgHeight); 
+            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
             pdf.save("scheduled.pdf");
         })
     }
@@ -135,21 +167,10 @@ export default function App() {
                     <option value={6}>Sunday</option>
                 </select>
             </label>
-            <label>Start Time
-                <Flatpickr
-                    value={startTime}
-                    onChange={(selectedDates, dateStr) => {setStartTime(dateStr); handleRenderBlocks()}}
-                    onBlur={handleRenderBlocks}
-                    onFocus={handleRenderBlocks}
-                    options={{
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    }}
-                />
+            <label>NO. of Sessions
+                <input type='number' max={7} value={sessions} onChange={(e) => handleAddSession(e)} />
             </label>
-            <label>Session Period
+            {/* <label>Session Period
                 <Flatpickr
                     value={timeRange}
                     onChange={(selectedDates, dateStr) => {setTimeRange(dateStr); handleRenderBlocks()}}
@@ -162,8 +183,8 @@ export default function App() {
                     time_24hr: true,
                     }}
                 />
-            </label>
-            <label>End Time
+            </label> */}
+            {/* <label>End Time
                 <Flatpickr
                     value={endTime}
                     onChange={(selectedDates, dateStr) => {setEndTime(dateStr); handleRenderBlocks()}}
@@ -176,19 +197,15 @@ export default function App() {
                     time_24hr: true,
                     }}
                 />
-            </label>
-            <button className='btn-render' onClick={handleRenderBlocks}>Update Blocks</button>
+            </label> */}
+            <button id='blocker' className='btn-render' onClick={handleRenderBlocks}>Update Blocks</button>
             <button className='btn-render' onClick={handleViewResult}>{ designLayout ? 'Results View' : 'Design View' }</button>
             <button className='btn-render' onClick={handleDownloadPdf}>Download</button>
-            <a href='http://jimmy-rubia.vercel.app/'>@rubiajimmy</a>
         </div>
         <div className='work-space'>
-        {
-            period < 1 && <div className='no-events'>No Events set</div>
-        }
             {
                 period > 0 &&
-                <div id='toPrint' className='period-box' style={{ width : `${(period) * 150 + 90}px`, height: `${(60 * (sessionCount - 1)) + 50}px`, minWidth: '100px', '--period-count': period }}>
+                <div id='toPrint' className='period-box' style={{ width : `${(period) * 150 + 90}px`, height: `${(60 * (sessions)) + 50}px`, minWidth: '100px', '--period-count': period }}>
                     <div className='p-b-header'>
                     <div className='h-day' style={{ minWidth: `${90}px`, width: '90px', height: '50px' }}></div>
                         {
@@ -199,17 +216,25 @@ export default function App() {
                             })
                         }
                     </div>
-                    <div className='p-b-body' style={{ height: `${(sessionCount - 1) * 60}px`, width: '100%' }}>
+                    <div className='p-b-body' style={{ height: `${(sessions) * 60}px`, width: '100%' }}>
                         <div className='b-left'>
                             {
-                                timeFrame.slice(0, -1).map((item, index) => {
+                                x.map((item, index) => {
                                     return <div key={index} className='h-day' style={{ height: `${60}px`, width: '90px' }} >
-                                        <p>{item}</p>
+                                    {
+                                        designLayout ? 
+                                            <textarea defaultValue={item} onChange={(e) => handleChangeTime(e, index)} 
+                                            placeholder='time ...' 
+                                            style={{ width: '100%', height: '100%' }} /> :
+                                            <div className='block-time'>
+                                                {item}
+                                            </div>
+                                    }
                                     </div>
                                 })
                             }
                         </div>
-                        <div className='b-right' style={{ width: `${period * 150}px`, height: `100%`, "--sess-count": `${(sessionCount - 1) * 40}px` }}>
+                        <div className='b-right' style={{ width: `${period * 150}px`, height: `100%`, "--sess-count": `${(sessions) * 40}px` }}>
                         {
                             elements.map((element, index) => {
                                 return <div key={index} className='block' style={{ width: `${100 / period}%` }} >
