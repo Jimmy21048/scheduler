@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import html2canvas from "html2canvas"
 import { jsPDF } from "jspdf"
-import Flatpickr from "react-flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
 
 export default function App() {
     const[period, setPeriod] = useState(0)
@@ -11,101 +9,60 @@ export default function App() {
     const week = ['Mon','Tue','Wed', 'Thur', 'Fri', 'Sat', 'Sun']
     const[days, setDays] = useState([])
     let tempDays
-    const[startTime, setStartTime] = useState('08:00')
-    const[endTime, setEndTime] = useState('19:00')
-    const[timeRange, setTimeRange] = useState("02:00")
-    const[sessionCount, setSessionCount] = useState(0)
-    const[timeFrame, setTimeFrame] = useState([])
     const[elements, setElements] = useState([])
+    const[prevElements, setPrevElements] = useState([])
     const[designLayout, setDesignLayout] = useState(true)
-    // new code
+    const[trigger, setTrigger] = useState(false)
     const[sessions, setSessions] = useState(0)
-    const[x, setX] = useState([])
+    const[prevTime, setPrevTime] = useState([])
+    const[time, setTime] = useState([])
+    const tempTime = useRef([])
     const blocker = document.getElementById("blocker")
 
     useEffect(() => {
         tempDays = (week.slice(startDay, ).concat(week.slice(0, startDay)).slice(0, period))
         setDays(tempDays)
         
-        setStartTime(startTime)
-        setEndTime(endTime)
-        setTimeRange(timeRange)
+        tempTime.current = prevTime
+        tempTime.current = tempTime.current.slice(0, sessions)
+
         
-        // new code
-        const tempX = []
-        const tempX2 = x
         for(let i = 0; i < sessions; i++) {
-            tempX.push('')
+            if(tempTime.current[i] === undefined) {
+                tempTime.current.push('')
+            }
         }
-        for(let i = 0; i < tempX.length; i++) {
-            if(tempX2[i]) {
-                if(tempX2[i].length > 0) {
-                    tempX[i] = tempX2[i]
+        for(let i = 0; i < tempTime.current.length; i++) {
+            if(time[i]) {
+                if(time[i].length > 0) {
+                    tempTime.current[i] = time[i]
                 }
             }
-
         }
-        
-        setX(tempX)
-
-        // let [startHours, startMinutes] = startTime.split(':').map(Number)
-        // let [endHours, endMinutes] = endTime.split(':').map(Number)
-        // let [rangeHours, rangeMinutes] = timeRange.split(':').map(Number)
-        // let minuteStart = (startHours * 60) + startMinutes
-        // let minuteEnd = (endHours * 60) + endMinutes
-        // let minuteRange = (rangeHours * 60) + rangeMinutes
-        // let newDate = new Date();
-        // const tempEndHours = new Date()
-        // let count = 0
-        // const timeFrameArray = []
-        
-        
-        // while(minuteEnd - minuteStart >= minuteRange) {
-        //     if(count === 0 ) {
-        //         newDate.setHours(startHours, startMinutes); 
-        //         tempEndHours.setHours(startHours, startMinutes + (minuteRange))
-        //         startHours = newDate.getHours()
-        //         startMinutes = newDate.getMinutes()
-        //         endHours = tempEndHours.getHours()
-        //         endMinutes = tempEndHours.getMinutes()
-        //     } else {
-        //         newDate.setHours(startHours, startMinutes + minuteRange); 
-        //         tempEndHours.setHours(startHours, startMinutes + (minuteRange * 2))
-        //         minuteStart +=minuteRange
-        //         startHours = newDate.getHours()
-        //         startMinutes = newDate.getMinutes()
-        //         endHours = tempEndHours.getHours()
-        //         endMinutes = tempEndHours.getMinutes()
-        //     }
-        //     count ++
-
-        //     timeFrameArray.push(`${String(startHours).padStart(2, "0")}:${String(startMinutes).padStart(2, "0")} - ${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`)
-        // }
-        
-        // setTimeFrame(timeFrameArray)
-        // setSessionCount(count)
+        setTime(tempTime.current)
 
         handleRenderBlocks()
-    }, [period, startDay, startTime, endTime, timeRange, sessions])
+    }, [period, sessions, trigger, startDay])
     
-
     const handleRenderBlocks = () => {
-        let elementCount = []
-        for(let i = 0; i < (period ) * sessions; i ++) {
-            elementCount.push('')
+        let elementCount = prevElements
+        elementCount = elementCount.slice(0, (sessions * period))
+
+        for(let i = 0; i < (period  * sessions); i ++) {
+            if(elementCount[i] === undefined) {
+                elementCount.push('')
+            } 
         }
 
+        console.log(elementCount, elements)
         for(let i = 0; i < elementCount.length; i++) {
-            if(elements.length > 0) {
                 if(elements[i]) {
                     if(elements[i].length > 0) {
                         elementCount[i] = elements[i]
                     }
                 }
-            }
         }
-
-
+        
         setElements(elementCount)
     }
 
@@ -114,19 +71,25 @@ export default function App() {
         let tempArr = elements
         tempArr[index] = e.target.value
         setElements(tempArr)
+        setTrigger(!trigger)
     }
-
     const handleChangeTime = (e, index) => {
-        let tempArr = x
+        let tempArr = time
         tempArr[index] = e.target.value
-        setX(tempArr)
+        setTime(tempArr)
+        setTrigger(!trigger)
     }
 
     const handleAddSession = (e) => {
-
+        if(e.target.value === 0 || e.target.value === '') {
+            setPrevTime(time)
+            setPrevElements(elements)
+        }
         setSessions(e.target.value)
+        setTrigger(!trigger)
         blocker.click()
     }
+
 
     const handleViewResult = () => {
         handleRenderBlocks()
@@ -154,7 +117,7 @@ export default function App() {
         <div className='side-panel'>
             <h1>Scheduler</h1>
             <label>Period (days)
-                <input type='number' max={7} value={period} onChange={(e) => setPeriod(e.target.value)} />
+                <input type='number' max={7} value={period} onChange={(e) => setPeriod(e.target.value > 7 ? 7 : e.target.value)} />
             </label>
             <label>Start Day
                 <select onChange={(e) => {setStartDay(e.target.value); handleRenderBlocks()}} onFocus={handleRenderBlocks} onBlur={handleRenderBlocks} >
@@ -168,36 +131,8 @@ export default function App() {
                 </select>
             </label>
             <label>NO. of Sessions
-                <input type='number' max={7} value={sessions} onChange={(e) => handleAddSession(e)} />
+                <input type='number' max={7} value={sessions} onInput={(e) => handleAddSession(e)} />
             </label>
-            {/* <label>Session Period
-                <Flatpickr
-                    value={timeRange}
-                    onChange={(selectedDates, dateStr) => {setTimeRange(dateStr); handleRenderBlocks()}}
-                    onBlur={handleRenderBlocks}
-                    onFocus={handleRenderBlocks}
-                    options={{
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    }}
-                />
-            </label> */}
-            {/* <label>End Time
-                <Flatpickr
-                    value={endTime}
-                    onChange={(selectedDates, dateStr) => {setEndTime(dateStr); handleRenderBlocks()}}
-                    onBlur={handleRenderBlocks}
-                    onFocus={handleRenderBlocks}
-                    options={{
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    }}
-                />
-            </label> */}
             <button id='blocker' className='btn-render' onClick={handleRenderBlocks}>Update Blocks</button>
             <button className='btn-render' onClick={handleViewResult}>{ designLayout ? 'Results View' : 'Design View' }</button>
             <button className='btn-render' onClick={handleDownloadPdf}>Download</button>
@@ -219,7 +154,7 @@ export default function App() {
                     <div className='p-b-body' style={{ height: `${(sessions) * 60}px`, width: '100%' }}>
                         <div className='b-left'>
                             {
-                                x.map((item, index) => {
+                                time.map((item, index) => {
                                     return <div key={index} className='h-day' style={{ height: `${60}px`, width: '90px' }} >
                                     {
                                         designLayout ? 
