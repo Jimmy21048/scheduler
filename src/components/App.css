@@ -219,6 +219,7 @@ a {
   .block-time {
     font-size: 0.6rem;
     letter-spacing: initial;
+    padding: 5px;
   }
   h1 {
     display: none;
