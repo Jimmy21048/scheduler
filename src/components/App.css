@@ -214,12 +214,12 @@ a {
   }
   textarea {
     font-size: 0.6rem;
-    padding: 0;
+    padding: 2px;
   }
   .block-time {
     font-size: 0.6rem;
     letter-spacing: initial;
-    padding: 5px;
+    padding: 2px;
   }
   h1 {
     display: none;

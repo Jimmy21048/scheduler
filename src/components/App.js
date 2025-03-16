@@ -101,14 +101,17 @@ export default function App() {
         const divToPrint = document.getElementById('toPrint')
 
         html2canvas(divToPrint).then((canvas) => {
-            const imgData = canvas.toDataURL("image/png");
-            const pdf = new jsPDF("p", "mm", "a4");
-            
-            const imgWidth = 200; // A4 size width in mm
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const imgData = canvas.toDataURL("image/jpeg", 1.0);
 
-            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-            pdf.save("scheduled.pdf");
+            // Create a download link
+            const link = document.createElement("a");
+            link.href = imgData;
+            link.download = "screenshot.jpg";
+        
+            // Trigger the download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         })
     }
 
