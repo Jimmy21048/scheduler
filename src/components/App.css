@@ -216,6 +216,10 @@ a {
     font-size: 0.6rem;
     padding: 0;
   }
+  .block-time {
+    font-size: 0.6rem;
+    letter-spacing: initial;
+  }
   h1 {
     display: none;
   }
