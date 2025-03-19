@@ -54,7 +54,6 @@ export default function App() {
             } 
         }
 
-        console.log(elementCount, elements)
         for(let i = 0; i < elementCount.length; i++) {
                 if(elements[i]) {
                     if(elements[i].length > 0) {
@@ -98,21 +97,25 @@ export default function App() {
 
     const handleDownloadPdf = () => {
         handleRenderBlocks()
-        const divToPrint = document.getElementById('toPrint')
+        setDesignLayout(false)
 
-        html2canvas(divToPrint).then((canvas) => {
-            const imgData = canvas.toDataURL("image/jpeg", 1.0);
+            if(designLayout === false) {
+                const divToPrint = document.getElementById('toPrint')
 
-            // Create a download link
-            const link = document.createElement("a");
-            link.href = imgData;
-            link.download = "screenshot.jpg";
+                html2canvas(divToPrint).then((canvas) => {
+                    const imgData = canvas.toDataURL("image/jpeg", 1.0);
         
-            // Trigger the download
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        })
+                    const link = document.createElement("a");
+                    link.href = imgData;
+                    link.download = "timetable.jpg";
+                
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                })
+
+            }
+
     }
 
   return (
@@ -162,7 +165,7 @@ export default function App() {
                                     {
                                         designLayout ? 
                                             <textarea defaultValue={item} onChange={(e) => handleChangeTime(e, index)} 
-                                            placeholder='time ...' 
+                                            placeholder='xx:xx - yy:yy' 
                                             style={{ width: '100%', height: '100%' }} /> :
                                             <div className='block-time'>
                                                 {item}
@@ -179,7 +182,7 @@ export default function App() {
                                     {
                                         designLayout ? 
                                             <textarea defaultValue={element} onChange={(e) => handleChangeText(e, index)} 
-                                            placeholder='text here...' 
+                                            placeholder='event here...' 
                                             style={{ width: '100%', height: '100%' }} /> :
                                             <div className='block-text'>
                                                 {element}
