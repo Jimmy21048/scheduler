@@ -43,6 +43,7 @@ export default function App() {
 
         handleRenderBlocks()
     }, [period, sessions, trigger, startDay])
+
     
     const handleRenderBlocks = () => {
         let elementCount = prevElements
@@ -89,6 +90,16 @@ export default function App() {
         blocker.click()
     }
 
+    const handleAddPeriod = (e) => {
+        if(e.target.value === 0 || e.target.value === '') {
+            setPrevTime(time)
+            setPrevElements(elements)
+        }
+        setPeriod(e.target.value > 7 ? 7 : e.target.value)
+        setTrigger(!trigger)
+        blocker.click()
+    }
+
 
     const handleViewResult = () => {
         handleRenderBlocks()
@@ -96,8 +107,7 @@ export default function App() {
     }
 
     const handleDownloadPdf = () => {
-        handleRenderBlocks()
-        setDesignLayout(false)
+            handleRenderBlocks()
 
             if(designLayout === false) {
                 const divToPrint = document.getElementById('toPrint')
@@ -113,9 +123,9 @@ export default function App() {
                     link.click();
                     document.body.removeChild(link);
                 })
-
+            } else {
+                alert("Table is still in design view!, change to Results View")
             }
-
     }
 
   return (
@@ -123,7 +133,7 @@ export default function App() {
         <div className='side-panel'>
             <h1>Scheduler</h1>
             <label>Period (days)
-                <input type='number' max={7} value={period} onChange={(e) => setPeriod(e.target.value > 7 ? 7 : e.target.value)} />
+                <input type='number' max={7} value={period} onChange={(e) => handleAddPeriod(e)} />
             </label>
             <label>Start Day
                 <select onChange={(e) => {setStartDay(e.target.value); handleRenderBlocks()}} onFocus={handleRenderBlocks} onBlur={handleRenderBlocks} >
