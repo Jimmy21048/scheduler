@@ -154,6 +154,7 @@ export default function App() {
             <button className='btn-render' onClick={handleDownloadPdf}>Download</button>
         </div>
         <div className='work-space'>
+            { (period === 0 || period === '') && <div className='no-events'>No events set</div> }
             {
                 period > 0 &&
                 <div id='toPrint' className='period-box' style={{ width : `${(period) * 150 + 90}px`, height: `${(60 * (sessions)) + 50}px`, minWidth: '100px', '--period-count': period }}>
